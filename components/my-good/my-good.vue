@@ -2,16 +2,20 @@
 	<view class="goods-item">
 		<!-- 左侧图片区域 -->
 		<view class="goods-item-left">
-			<image :src="item.goods_small_logo||defaultImg" class="goods-img"></image>
+			<radio :checked="good.goods_state" color="#c00000" v-if="showRadio" @click="clickRadioHandler"></radio>
+			<image :src="good.goods_small_logo||defaultImg" class="goods-img"></image>
 		</view>
 		<!-- 右侧文本 -->
 		<view class="goods-item-right">
 			<view class="goods-title">
-				{{item.goods_name}}
+				{{good.goods_name}}
 			</view>
+		<view class="goods-money-cou">
 			<view class="goods-money">
-				￥{{item.goods_price | toFix}}
+				￥{{good.goods_price | toFix}}
 			</view>
+			<uni-number-box :min="1" :value="good.goods_count" v-if="showNum" @change="numChangeHandler"></uni-number-box>
+		</view>
 		</view>
 	</view>
 </template>
@@ -20,9 +24,19 @@
 	export default {
 		name: "my-good",
 		props: {
-			item: {
+			good: {
 				type: Object,
 				default: {}
+			},
+			// 控制radio的显示与隐藏。默认隐藏。
+			showRadio: {
+				type: Boolean,
+				default: false
+			},
+			// 控制加减组件的显示与隐藏
+			showNum:{
+				type:Boolean,
+				default:false
 			}
 		},
 		filters: {
@@ -36,6 +50,22 @@
 				// 商品默认图片
 				defaultImg: 'http://hd.wallpaperswide.com/thumbs/assassins_creed_mirage_video_game_2023-t2.jpg'
 			};
+		},
+		methods:{
+			clickRadioHandler(){
+				this.$emit('radio-change',{
+					goods_id:this.good.goods_id,
+					goods_state:!this.good.goods_state
+				})
+			},
+			numChangeHandler(goods_count_box){
+				
+				this.$emit('num-change',{
+					goods_id:this.good.goods_id,
+					// +可以把字符串转数字。
+					goods_count:Number(goods_count_box)
+				})
+			}
 		}
 	}
 </script>
@@ -49,6 +79,9 @@
 		margin: 5px;
 
 		.goods-item-left {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
 			margin-right: 8px;
 
 			.goods-img {
@@ -61,7 +94,7 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
-
+			width: 100%;
 			.goods-title {
 				font-size: 14px;
 			}
@@ -70,5 +103,11 @@
 				color: red;
 			}
 		}
+	}
+	.goods-money-cou{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: 5px;
 	}
 </style>

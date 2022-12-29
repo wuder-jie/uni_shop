@@ -32,7 +32,9 @@
 </template>
 
 <script>
+	import cartBadge from '../../mixins/cartBadge.js'
 	export default {
+		mixins:[cartBadge],
 		data() {
 			return {
 				// 可用窗口高度
