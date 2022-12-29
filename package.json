@@ -19,5 +19,8 @@
   "homepage": "https://github.com/wuder-jie/uni_shop#readme",
   "dependencies": {
     "@escook/request-miniprogram": "^0.2.1"
+  },
+  "devDependencies": {
+    "vuex": "^4.1.0"
   }
 }

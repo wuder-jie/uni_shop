@@ -1,84 +1,99 @@
 <template>
 	<view v-if="goods_info.goods_name">
 		<view class="box-con">
-			
-		
-		<!-- 轮播图区域 -->
-		<view class="goods-swiper">
-			<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
-				<swiper-item v-for="(item,index) in goods_info.pics" :key="index">
-					<view class="swiper-item">
-						<image :src="item.pics_big"></image>
+
+
+			<!-- 轮播图区域 -->
+			<view class="goods-swiper">
+				<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
+					<swiper-item v-for="(item,index) in goods_info.pics" :key="index">
+						<view class="swiper-item">
+							<image :src="item.pics_big"></image>
+						</view>
+					</swiper-item>
+				</swiper>
+			</view>
+			<!-- 商品信息区域 -->
+			<view class="goods-info">
+				<!-- 商品价钱 -->
+				<view class="goods-info-money">
+					￥{{goods_info.goods_price}}
+				</view>
+				<!-- 商品标题和收藏图标 -->
+				<view class="goods-info-body">
+					<view class="goods-info-tit">
+						{{goods_info.goods_name}}
 					</view>
-				</swiper-item>
-			</swiper>
-		</view>
-		<!-- 商品信息区域 -->
-		<view class="goods-info">
-			<!-- 商品价钱 -->
-			<view class="goods-info-money">
-				￥{{goods_info.goods_price}}
-			</view>
-			<!-- 商品标题和收藏图标 -->
-			<view class="goods-info-body">
-				<view class="goods-info-tit">
-					{{goods_info.goods_name}}
+					<view class="favi">
+						<uni-icons type="star" size="16"></uni-icons>
+						<text>收藏</text>
+					</view>
 				</view>
-				<view class="favi">
-					<uni-icons type="star" size="16"></uni-icons>
-					<text>收藏</text>
+				<view class="goods-info-foot">
+					快递：免运费
 				</view>
 			</view>
-			<view class="goods-info-foot">
-				快递：免运费
-			</view>
-		</view>
-		<!-- 图片展示区域 -->
-		<rich-text :nodes="goods_info.goods_introduce"></rich-text>
+			<!-- 图片展示区域 -->
+			<rich-text :nodes="goods_info.goods_introduce"></rich-text>
 		</view>
 		<!-- 商品导航区域 -->
 		<view class="goods-show">
-		<uni-goods-nav :fill="true"  :options="options" :buttonGroup="buttonGroup"  @click="onClick" @buttonClick="buttonClick" />
-		</view>
+			<uni-goods-nav :fill="true" :options="options" :buttonGroup="buttonGroup" @click="onClick"
+				@buttonClick="buttonClick" />
+		</view> 	
 	</view>
 </template>
 
 <script>
+	import { mapGetters } from 'vuex'
 	export default {
 		data() {
 			return {
 				// 存储商品详情信息
 				goods_info: {},
-				 options: [{
-							icon: 'headphones',
-							text: '客服'
-						}, {
-							icon: 'shop',
-							text: '店铺',
-							infoBackgroundColor:'#007aff',
-							infoColor:"red"
-						}, {
-							icon: 'cart',
-							text: '购物车',
-							info: 2
-						}],
-					    buttonGroup: [{
-					      text: '加入购物车',
-					      backgroundColor: 'rgb(30, 131, 255)',
-					      color: '#fff'
-					    },
-					    {
-					      text: '立即购买',
-					      backgroundColor: 'rgb(0, 83, 184)',
-					      color: '#fff'
-					    }
-					    ]
+				options: [{
+					icon: 'headphones',
+					text: '客服'
+				}, {
+					icon: 'shop',
+					text: '店铺',
+					infoBackgroundColor: '#007aff',
+					infoColor: "red"
+				}, {
+					icon: 'cart',
+					text: '购物车',
+					info: this.cartCount
+				}],
+				buttonGroup: [{
+						text: '加入购物车',
+						backgroundColor: 'rgb(30, 131, 255)',
+						color: '#fff'
+					},
+					{
+						text: '立即购买',
+						backgroundColor: 'rgb(0, 83, 184)',
+						color: '#fff'
+					}
+				]
 			}
 		},
+		computed:{
+			...mapGetters(['cartCount'])
+		},
+		watch:{
+			cartCount:{
+				immediate:true,
+				handler(newVal){
+					this.options[2].info=newVal;
+				}
+			}
+		},
+
 		onLoad(options) {
 			const goods_id = options.goods_id
 			this.getGoodsInfo(goods_id)
 		},
+	
 		methods: {
 			async getGoodsInfo(goods_id) {
 				const {
@@ -92,27 +107,40 @@
 				// 使用字符串的 replace() 方法，为 img 标签添加行内的 style 样式，从而解决图片底部
 				// 空白间隙的问题,使用字符串的 replace() 方法，将 webp 的后缀名替换为 jpg 的后缀名
 				res.message.goods_introduce = res.message.goods_introduce.replace(/<img /g,
-					'<img style="display:block;"').replace(/webp/g,'jpg')
+					'<img style="display:block;"').replace(/webp/g, 'jpg')
 				// 数据请求成功。
 				this.goods_info = res.message;
 			},
-			 onClick (e) {
-				 if(e.content.text==='购物车'){
-					 // 跳转到购物车页面
-					 uni.switchTab({
-					 	url:'/pages/cart/cart'
-					 })
-				 }
-				 
-				    uni.showToast({
-				      title: `点击${e.content.text}`,
-				      icon: 'none'
-				    })
-				  },
-				  buttonClick (e) {
-				    console.log(e)
-				    this.options[2].info++
-				  }
+			
+			onClick(e) {
+				if (e.content.text === '购物车') {
+					// 跳转到购物车页面
+					uni.switchTab({
+						url: '/pages/cart/cart'
+					})
+				}
+
+				uni.showToast({
+					title: `点击${e.content.text}`,
+					icon: 'none'
+				})
+			},
+			buttonClick(e) {
+				if (e.content.text === '加入购物车') {
+					// 商品对象{goods_id,goods_name,goods_count,goods_price,goods_small_logo,goods_state}
+					const goods = {
+						goods_id: this.goods_info.goods_id,
+						goods_name: this.goods_info.goods_name,
+						goods_count: 1,
+						goods_price: this.goods_info.goods_price,
+						goods_small_logo: this.goods_info.goods_small_logo,
+						// 被加入购物车为true，否则为false。
+						goods_state: true
+					}
+					this.$store.commit('ADDCART', goods)
+					
+				}
+			}
 		}
 	}
 </script>
@@ -120,8 +148,8 @@
 <style lang="scss">
 	.swiper-item {
 		height: 750rpx;
-	
-	image {
+
+		image {
 			height: 100%;
 			width: 100%;
 		}
@@ -162,14 +190,16 @@
 
 		}
 	}
-	.goods-show{
+
+	.goods-show {
 		width: 100%;
 		position: fixed;
 		bottom: 0;
-		left:0;
-		
+		left: 0;
+
 	}
-	.box-con{
+
+	.box-con {
 		padding-bottom: 50px;
 	}
 </style>

@@ -48,7 +48,9 @@
 </template>
 
 <script>
+	import cartBadge from '../../mixins/cartBadge.js'
 	export default {
+		mixins:[cartBadge],
 		data() {
 			return {
 				// 存储轮播图数据

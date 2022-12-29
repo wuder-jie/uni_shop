@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="search-list">
-			<uni-search-bar @confirm="search" @input="input" :radius="100" cancelButton="none" placeholder="请输入搜索内容">
+			<uni-search-bar @input="input" :radius="100" cancelButton="none" placeholder="请输入搜索内容">
 			</uni-search-bar>
 		</view>
 		<!-- 搜索建议 -->

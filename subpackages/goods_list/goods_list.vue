@@ -2,7 +2,7 @@
 	<view>
 		<view class="goods-list">
 			<view v-for="(item,index) in goodsList" :key="index" @click="goToGoodsDetail(item)">
-				<my-good :item="item"></my-good>
+				<my-good :good="item" :showNum="false"></my-good>
 			</view>
 		</view>
 	</view>
@@ -80,6 +80,7 @@
 				// 数据请求成功。
 				this.goodsList = [...this.goodsList, ...res.message.goods]
 				this.total = res.message.total;
+				
 			},
 			goToGoodsDetail(good) {
 				uni.navigateTo({
@@ -92,5 +93,7 @@
 </script>
 
 <style lang="scss">
-
+.goods-list{
+	margin-bottom: 50px;
+}
 </style>
